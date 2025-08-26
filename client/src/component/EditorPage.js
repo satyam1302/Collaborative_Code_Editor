@@ -4,6 +4,7 @@ import Editor from './Editor';
 import { initSocket } from '../socket';
 import { useNavigate, useLocation, useParams, Navigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
+import axios from 'axios';
 import executeCode from './CodeRun';
 
 function EditorPage() {
@@ -15,6 +16,7 @@ function EditorPage() {
     const [showChat, setShowChat] = useState(false);
     const socketRef = useRef(null);
     const messageRef = useRef();
+    const executionInputRef = useRef(null); // Ref for code execution input
     const location = useLocation();
     const { roomId } = useParams();
     const navigate = useNavigate();
@@ -91,9 +93,12 @@ function EditorPage() {
             toast.error("Error: Code cannot be empty");
             return;
         }
+        
+        // Capture the user-provided input from the new textarea
+        const userInput = executionInputRef.current ? executionInputRef.current.value : "";
 
         setLoading(true);
-        const response = await executeCode(code, language);
+        const response = await executeCode(code, language, userInput);
         setLoading(false);
 
         if (response.success) {
@@ -101,6 +106,27 @@ function EditorPage() {
         } else {
             toast.error(`Error: ${response.output}`);
             setOutput("");
+        }
+    };
+
+    const handleSaveCode = async () => {
+        const code = codeRef.current;
+        if (!code || !code.trim()) {
+            toast.error("Error: Code cannot be empty");
+            return;
+        }
+
+        try {
+            const response = await axios.post('http://localhost:5001/save-code', {
+                roomId,
+                code,
+            });
+            if (response.status === 200) {
+                toast.success("Code saved successfully!");
+            }
+        } catch (error) {
+            console.error("Error saving code:", error);
+            toast.error("Failed to save code");
         }
     };
 
@@ -129,11 +155,12 @@ function EditorPage() {
                         ))}
                     </div>
                     <div className="mt-auto">
-                        <hr />
-                        <button onClick={copyRoomId} className="btn btn-success">Copy Room Id</button>
-                        <button onClick={leaveRoom} className="mt-2 btn btn-danger mb-2 px-3 btn-block">Leave Room</button>
-                        <button onClick={() => setShowChat(!showChat)} className="btn btn-secondary">Toggle Chat</button>
-                    </div>
+    <hr />
+    <button onClick={copyRoomId} className="btn btn-success w-100 my-2">Copy Room Id</button>
+    <button onClick={leaveRoom} className="btn btn-danger w-100 my-2">Leave Room</button>
+    <button onClick={() => setShowChat(!showChat)} className="btn btn-secondary w-100 my-2">ChatBox</button>
+</div>
+
                 </div>
 
                 <div className={showChat ? "col-md-7 d-flex flex-column" : "col-md-10 d-flex flex-column"}>
@@ -156,7 +183,21 @@ function EditorPage() {
                         <button onClick={handleRunCode} className="btn btn-primary" disabled={loading}>
                             {loading ? "Running..." : "Run Code"}
                         </button>
+                        <button onClick={handleSaveCode} className="btn btn-success">Save Code</button>
                     </div>
+
+                    {/* New Input Field for Code Execution Input */}
+                    <div className="mt-2">
+                        <label htmlFor="codeInput" className="form-label">Input (if required):</label>
+                        <textarea
+                            id="codeInput"
+                            ref={executionInputRef}
+                            placeholder="Enter input for your code here"
+                            rows="3"
+                            className="form-control"
+                        ></textarea>
+                    </div>
+
                     <div className="mt-2" style={{ height: 'calc(26vh - 60px)', overflowY: 'auto', padding: '10px', border: '1px solid #333', color: 'white' }}>
                         <strong>Output:</strong>
                         <pre>{output}</pre>
@@ -198,7 +239,7 @@ function EditorPage() {
                                 >
                                     <div
                                         className={`message-box p-2 mb-2 ${msg.username === location.state?.username ? 'bg-primary text-light' : 'bg-secondary text-light'}`}
-                                        style={{ maxWidth: '70%', borderRadius: '10px', paddingTop: '20px' }} // Added padding to lower text
+                                        style={{ maxWidth: '70%', borderRadius: '10px', paddingTop: '20px' }}
                                     >
                                         {msg.username !== location.state?.username && <strong>{msg.username}</strong>}
                                         <div>{msg.message}</div>

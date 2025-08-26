@@ -35,6 +35,27 @@ function Editor({ socketRef, roomId, onCodeChange }) {
         init();
     }, []);
 
+    // Example fetch request from frontend to the backend
+useEffect(() => {
+    const fetchCode = async () => {
+      try {
+        const response = await fetch(`http://localhost:5001/get-code/${roomId}`);
+        const data = await response.json();
+  
+        if (data.success) {
+          console.log('Code fetched:', data.code);
+          // Set the code to your editor or display it
+        } else {
+          console.error(data.message);
+        }
+      } catch (error) {
+        console.error('Error fetching code:', error);
+      }
+    };
+  
+    fetchCode();
+  }, [roomId]);
+  
     useEffect(() => {
         if (socketRef.current) {
             socketRef.current.on("code-change", ({ code }) => {
