@@ -39,7 +39,8 @@ function Editor({ socketRef, roomId, onCodeChange }) {
 useEffect(() => {
     const fetchCode = async () => {
       try {
-        const response = await fetch(`http://localhost:5001/get-code/${roomId}`);
+        // const response = await fetch(`http://localhost:5001/get-code/${roomId}`);
+        const response = await fetch(`https://collaborative-code-editor-backend-keay.onrender.com/get-code/${roomId}`);
         const data = await response.json();
   
         if (data.success) {

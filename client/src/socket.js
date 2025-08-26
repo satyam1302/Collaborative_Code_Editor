@@ -8,6 +8,6 @@ export const initSocket = async () => {
         transports: ['websocket'],
     };
     // console.log(process.env.REACT_APP_BACKEND_URL);
-    return io('http://localhost:5001', option);
-    
+    // return io('http://localhost:5001', option);
+    return io('https://collaborative-code-editor-backend-keay.onrender.com', option);
 };
