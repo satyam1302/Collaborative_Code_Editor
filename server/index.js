@@ -330,7 +330,15 @@ require('dotenv').config();
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+// const io = new Server(server);
+
+const io = new Server(server, {
+  cors: {
+    origin: "https://collaborative-code-editor-tci5.onrender.com", // e.g., https://your-frontend.onrender.com
+    methods: ["GET", "POST"],
+    credentials: true
+  }
+});
 
 const PORT = process.env.PORT || 5001;
 
@@ -468,7 +476,8 @@ io.on("connection", (socket) => {
 
         // Save the code to the database
         try {
-            await fetch(`http://localhost:${PORT}/save-code`, {
+            // await fetch(`http://localhost:${PORT}/save-code`, {
+            await fetch(`https://collaborative-code-editor-backend-keay.onrender.com/save-code`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
