@@ -351,7 +351,7 @@ return (
       <div style={{ flex: outputHeight, display: 'flex', flexDirection: 'column', padding: '5px' }}>
         {/* Input */}
         <div>
-          <label htmlFor="codeInput" className="form-label">Input (if required):</label>
+          <label htmlFor="codeInput" className="form-label text-white">Input (if required):</label>
           <textarea
             id="codeInput"
             ref={executionInputRef}
