@@ -272,6 +272,174 @@ function EditorPage() {
 //     );
 // }
 
+// return (
+//  <div className="container-fluid vh-100">
+//   <div className="row h-100">
+//     {/* Sidebar */}
+//     <div className="col-md-2 bg-dark text-light d-flex flex-column h-100">
+//       <img src="/images/logo.png" alt="CodeCast" className="img-fluid mx-auto mt-2" style={{ maxWidth: '70px' }} />
+//       <hr />
+//       <div className="d-flex flex-column flex-grow-1 overflow-auto">
+//         {clients.map((client) => (
+//           <Client key={client.socketId} username={String(client.username)} />
+//         ))}
+//       </div>
+//       <div className="mt-auto">
+//         <hr />
+//         <button onClick={copyRoomId} className="btn btn-success w-100 my-2">Copy Room Id</button>
+//         <button onClick={leaveRoom} className="btn btn-danger w-100 my-2">Leave Room</button>
+//         <button onClick={() => setShowChat(!showChat)} className="btn btn-secondary w-100 my-2">ChatBox</button>
+//       </div>
+//     </div>
+
+//     {/* Editor + Input + Output with Sliding Divider */}
+//     <div className={showChat ? "col-md-7 d-flex flex-column h-100" : "col-md-10 d-flex flex-column h-100"}>
+
+//       {/* Editor */}
+//       <div style={{ flex: editorHeight, overflow: 'auto', padding: '10px', border: '1px solid #333' }}>
+//         <Editor socketRef={socketRef} roomId={roomId} onCodeChange={(code) => (codeRef.current = code)} />
+//       </div>
+
+//       {/* Divider */}
+//       <div
+//         style={{ height: '5px', cursor: 'row-resize', background: '#555' }}
+//         onMouseDown={(e) => {
+//           e.preventDefault();
+//           const startY = e.clientY;
+//           const startEditorHeight = editorHeight;
+//           const startOutputHeight = outputHeight;
+
+//           const onMouseMove = (moveEvent) => {
+//             const dy = moveEvent.clientY - startY;
+//             const containerHeight = document.querySelector('.col-md-7').clientHeight;
+//             const newEditorHeight = ((startEditorHeight * containerHeight + dy) / containerHeight);
+//             const newOutputHeight = ((startOutputHeight * containerHeight - dy) / containerHeight);
+//             if (newEditorHeight > 0.1 && newOutputHeight > 0.1) {
+//               setEditorHeight(newEditorHeight);
+//               setOutputHeight(newOutputHeight);
+//             }
+//           };
+
+//           const onMouseUp = () => {
+//             document.removeEventListener('mousemove', onMouseMove);
+//             document.removeEventListener('mouseup', onMouseUp);
+//           };
+
+//           document.addEventListener('mousemove', onMouseMove);
+//           document.addEventListener('mouseup', onMouseUp);
+//         }}
+//       ></div>
+
+//        {/* Run + Save + Language */}
+//       <div className="d-flex justify-content-between align-items-center mt-2">
+//         <select
+//           className="form-select"
+//           style={{ width: '20%' }}
+//           value={language}
+//           onChange={(e) => setLanguage(e.target.value)}
+//         >
+//           {languages.map((lang) => (
+//             <option key={lang.code} value={lang.code}>{lang.name}</option>
+//           ))}
+//         </select>
+//         <button onClick={handleRunCode} className="btn btn-primary" disabled={loading}>
+//           {loading ? "Running..." : "Run Code"}
+//         </button>
+//         <button onClick={handleSaveCode} className="btn btn-success">Save Code</button>
+//       </div>
+//       {/* Input + Output */}
+//       <div style={{ flex: outputHeight, display: 'flex', flexDirection: 'column', padding: '5px' }}>
+//         {/* Input */}
+//         <div>
+//           <label htmlFor="codeInput" className="form-label text-white">Input (if required):</label>
+//           <textarea
+//             id="codeInput"
+//             ref={executionInputRef}
+//             placeholder="Enter input for your code here"
+//             rows="3"
+//             className="form-control"
+//           ></textarea>
+//         </div>
+
+//         {/* Output */}
+//         <div style={{ flex: 1, overflowY: 'auto', marginTop: '5px', padding: '10px', border: '1px solid #333', color: 'white', backgroundColor: '#1e1e1e' }}>
+//           <strong>Output:</strong>
+//           <pre>{output}</pre>
+//         </div>
+//       </div>
+
+//       {/* Run + Save + Language
+//       <div className="d-flex justify-content-between align-items-center mt-2">
+//         <select
+//           className="form-select"
+//           style={{ width: '20%' }}
+//           value={language}
+//           onChange={(e) => setLanguage(e.target.value)}
+//         >
+//           {languages.map((lang) => (
+//             <option key={lang.code} value={lang.code}>{lang.name}</option>
+//           ))}
+//         </select>
+//         <button onClick={handleRunCode} className="btn btn-primary" disabled={loading}>
+//           {loading ? "Running..." : "Run Code"}
+//         </button>
+//         <button onClick={handleSaveCode} className="btn btn-success">Save Code</button>
+//       </div> */}
+//     </div>
+
+//     {/* Chat */}
+//     {showChat && (
+//       <div className="col-md-3 d-flex flex-column position-relative h-100" style={{ borderLeft: '1px solid #333' }}>
+//         <button
+//           onClick={() => setShowChat(false)}
+//           style={{
+//             position: 'absolute',
+//             top: '4px',
+//             right: '10px',
+//             background: 'none',
+//             border: 'none',
+//             fontSize: '20px',
+//             color: 'white',
+//             cursor: 'pointer',
+//             zIndex: 10
+//           }}
+//         >
+//           &#x2715;
+//         </button>
+//         <div className="chat-box overflow-auto flex-grow-1 pt-5 px-2 text-white">
+//           {messages.map((msg, index) => (
+//             <div
+//               key={index}
+//               className={`d-flex ${msg.username === location.state?.username ? 'justify-content-end' : 'justify-content-start'}`}
+//             >
+//               <div
+//                 className={`message-box p-2 mb-2 ${msg.username === location.state?.username ? 'bg-primary text-light' : 'bg-secondary text-light'}`}
+//                 style={{ maxWidth: '70%', borderRadius: '10px', paddingTop: '20px' }}
+//               >
+//                 {msg.username !== location.state?.username && <strong>{msg.username}</strong>}
+//                 <div>{msg.message}</div>
+//               </div>
+//             </div>
+//           ))}
+//         </div>
+//         <div className="chat-input d-flex mt-2">
+//           <input
+//             type="text"
+//             ref={messageRef}
+//             className="form-control"
+//             placeholder="Type a message"
+//             onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+//           />
+//           <button onClick={handleSendMessage} className="btn btn-primary">Send</button>
+//         </div>
+//       </div>
+//     )}
+//   </div>
+// </div>
+
+// );
+
+
 return (
  <div className="container-fluid vh-100">
   <div className="row h-100">
@@ -330,23 +498,29 @@ return (
         }}
       ></div>
 
-       {/* Run + Save + Language */}
-      <div className="d-flex justify-content-between align-items-center mt-2">
-        <select
-          className="form-select"
-          style={{ width: '20%' }}
-          value={language}
-          onChange={(e) => setLanguage(e.target.value)}
-        >
-          {languages.map((lang) => (
-            <option key={lang.code} value={lang.code}>{lang.name}</option>
-          ))}
-        </select>
-        <button onClick={handleRunCode} className="btn btn-primary" disabled={loading}>
-          {loading ? "Running..." : "Run Code"}
-        </button>
+      {/* Run + Save + Language */}
+      <div className="d-flex align-items-center justify-content-between mt-2">
+        {/* Left group: Language + Run Code */}
+        <div className="d-flex align-items-center" style={{ gap: "10px" }}>
+          <select
+            className="form-select"
+            style={{ width: '150px' }}
+            value={language}
+            onChange={(e) => setLanguage(e.target.value)}
+          >
+            {languages.map((lang) => (
+              <option key={lang.code} value={lang.code}>{lang.name}</option>
+            ))}
+          </select>
+          <button onClick={handleRunCode} className="btn btn-primary" disabled={loading}>
+            {loading ? "Running..." : "Run Code"}
+          </button>
+        </div>
+
+        {/* Right: Save Code */}
         <button onClick={handleSaveCode} className="btn btn-success">Save Code</button>
       </div>
+
       {/* Input + Output */}
       <div style={{ flex: outputHeight, display: 'flex', flexDirection: 'column', padding: '5px' }}>
         {/* Input */}
@@ -367,24 +541,6 @@ return (
           <pre>{output}</pre>
         </div>
       </div>
-
-      {/* Run + Save + Language
-      <div className="d-flex justify-content-between align-items-center mt-2">
-        <select
-          className="form-select"
-          style={{ width: '20%' }}
-          value={language}
-          onChange={(e) => setLanguage(e.target.value)}
-        >
-          {languages.map((lang) => (
-            <option key={lang.code} value={lang.code}>{lang.name}</option>
-          ))}
-        </select>
-        <button onClick={handleRunCode} className="btn btn-primary" disabled={loading}>
-          {loading ? "Running..." : "Run Code"}
-        </button>
-        <button onClick={handleSaveCode} className="btn btn-success">Save Code</button>
-      </div> */}
     </div>
 
     {/* Chat */}
@@ -436,7 +592,6 @@ return (
     )}
   </div>
 </div>
-
 );
 }
 
