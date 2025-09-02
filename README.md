@@ -33,8 +33,7 @@ Multiple users can join a room, write code together, run it in different languag
 
 ⚠️ **Note:**  
 Since the backend is deployed on a **free hosting platform (Render free tier)**, the server goes to sleep when idle.  
-- On the **first attempt to join a room**, you may see:  
-Socket Connection Failed
+- On the **first attempt to join a room**, you may see: Socket Connection Failed
 - Wait **15–20 seconds** (to let the server wake up) and then join the room again.  
 - After the server is active, collaboration works smoothly.  
 
@@ -46,4 +45,5 @@ Socket Connection Failed
 ```bash
 git clone https://github.com/your-username/collaborative-code-editor.git
 cd collaborative-code-editor
+
 
